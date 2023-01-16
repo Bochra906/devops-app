@@ -1,0 +1,11 @@
+FROM cudachen/mask-rcnn-docker
+
+COPY . /car-damage-detection
+
+WORKDIR /car-damage-detection
+
+RUN pip install -r ./requirements.txt
+
+ENTRYPOINT [ "python3","custom.py"]
+
+CMD [ "train" , "--dataset=./","--weights=coco","--logs=./logs" ]
