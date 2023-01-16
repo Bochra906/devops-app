@@ -26,7 +26,7 @@ class ImageIn(BaseModel):
     car_id: Union[str, None] = None
 
 class ImageOut(BaseModel):
-    image_id: str
+    image_url: str
     user_id: Union[str, None] = None
     car_id: Union[str, None] = None
 
@@ -47,9 +47,12 @@ async def write_image_to_blob(image , key ):
     except Exception as ex:
         print('Exception:')
         print(ex)
-        
+
+
     #save image to local path
-    image.save(f"./results/{key}", format="PNG")
+    img_array = np.array(image)
+    im = Image.fromarray(img_array.astype('uint8')).convert('RGBA')
+    im.save(f"./results/{key}", format="PNG")
 
     # Create a blob client using the local file name as the name for the blob
     blob_client = blob_service_client.get_blob_client(container="images", blob=f"{key}.png")
@@ -73,7 +76,7 @@ with tf.device(cd.DEVICE):
     model = cd.modellib.MaskRCNN(mode="inference", model_dir=cd.MODEL_DIR, config=cd.config)
 
 # load the last trained model
-weights_path = "mask_rcnn_scratch_0004.h5"
+weights_path = "mask_rcnn_scratch_0005.h5"
 #weights_path = model.find_last()
 
 # Load weights
@@ -133,12 +136,10 @@ async def car_damage_detection(request:Request):
     key = image.image_link.split('/')[-1]
         
     
-    image_url = write_image_to_blob( result, key )
+    image_url = await write_image_to_blob( result, key )
 
-    response = requests.get(image_url)
-    if response.status_code != 200:
-        raise HTTPException(status_code=404, detail="Invalid URL")
 
+    """
     #connection with mongodb
     try:
         client = MongoClient("mongodb+srv://devops-project:devopsproject@cluster0.lp8tgkx.mongodb.net/test", 80)
@@ -149,5 +150,8 @@ async def car_damage_detection(request:Request):
     collection = db.car_damage_images
     new_image = await create_image(image_url , nb_damages)
     x = collection.insert_one(new_image)
-    output = ImageOut(image_id=str(x.inserted_id), user_id=data.get("user_id") , car_id=data.get("car_id") )
+    """
+
+    output = ImageOut(image_url=image_url, user_id=data.get("user_id") , car_id=data.get("car_id") )
     return output
+   

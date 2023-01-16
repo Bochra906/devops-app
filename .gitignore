@@ -5,3 +5,5 @@ __*
 .ipynb*
 # ingore tensoflow weights
 **/*.h5
+# ingore the result images
+**/results/*
