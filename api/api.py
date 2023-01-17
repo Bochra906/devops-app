@@ -16,18 +16,22 @@ from pymongo import MongoClient
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 from starlette_prometheus import metrics, PrometheusMiddleware
-
+from ddtrace import patch
 import logging
 
+from ddtrace.contrib.asyncio.provider import AsyncioContextProvider
+from ddtrace import tracer  
+tracer.configure(context_provider=AsyncioContextProvider())
 
 # setup loggers
 logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
 
 # get root logger
 logger = logging.getLogger(__name__) 
+# enable traces
+patch(fastapi=True)
 
 app = FastAPI()
-
 
 class ImageIn(BaseModel):
     image_link: str
