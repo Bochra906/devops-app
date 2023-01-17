@@ -9,3 +9,4 @@ httptools==0.1.*
 dnspython
 azure-storage-blob 
 azure-identity
+starlette-prometheus
