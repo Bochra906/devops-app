@@ -17,6 +17,14 @@ from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 from starlette_prometheus import metrics, PrometheusMiddleware
 
+import logging
+
+
+# setup loggers
+logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
+
+# get root logger
+logger = logging.getLogger(__name__) 
 
 app = FastAPI()
 
@@ -122,8 +130,9 @@ app.add_middleware(PrometheusMiddleware)
 app.add_route("/metrics", metrics)
 
 @app.post("/detectCarDamage" , response_model=ImageOut, tags=["damage"])
+
 async def car_damage_detection(request:Request):
-    
+    logger.info("logging from the root logger")
     data = await request.json()
 
     if len(data.get("image_link")) == 0 :
