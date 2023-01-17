@@ -8,5 +8,7 @@ Our application is developed using python and FastAPI.
 
 # Workflow
 
+![workflow](https://user-images.githubusercontent.com/60546216/212982436-fe8746cf-be5b-4a8b-8596-23635e59d6dc.png)
+
 # Docker
 We dockerized the training and inference microservices and pushed the images to Dockerhub.
