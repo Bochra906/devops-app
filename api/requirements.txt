@@ -10,3 +10,4 @@ dnspython
 azure-storage-blob 
 azure-identity
 starlette-prometheus
+ddtrace
