@@ -15,6 +15,7 @@ import pymongo
 from pymongo import MongoClient
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+from starlette_prometheus import metrics, PrometheusMiddleware
 
 
 app = FastAPI()
@@ -116,6 +117,9 @@ async def inference (image_link):
         title="Prediction"
     )
     return result , nb_damages
+
+app.add_middleware(PrometheusMiddleware)
+app.add_route("/metrics", metrics)
 
 @app.post("/detectCarDamage" , response_model=ImageOut, tags=["damage"])
 async def car_damage_detection(request:Request):
